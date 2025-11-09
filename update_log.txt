@@ -1,0 +1,2 @@
+[2025-11-09 12:08:11] ⚠️ Invalid playlist format — adding fallback header
+[2025-11-09 12:08:11] ✅ Toffee.m3u updated successfully at 2025-11-09 12:08:11
