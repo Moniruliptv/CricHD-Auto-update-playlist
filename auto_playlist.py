@@ -2,67 +2,55 @@ import requests
 import json
 from datetime import datetime
 
-# ✅ CricHD API Source
+# ✅ CricHD JSON Source
 API_URL = "https://raw.githubusercontent.com/abusaeeidx/CricHd-playlists-Auto-Update-permanent/refs/heads/main/api.json"
 
-# ✅ Output File
+# ✅ Output M3U File
 OUTPUT_FILE = "CricHD_Playlist.m3u"
-
-# ✅ Default Referrer / Origin
-DEFAULT_REFERRER = "https://profamouslife.com/"
-DEFAULT_ORIGIN = "https://profamouslife.com"
 
 def generate_playlist():
     print("🚀 Fetching CricHD JSON data...")
+
     try:
         response = requests.get(API_URL, timeout=20)
         response.raise_for_status()
         data = response.json()
-        print("✅ JSON data fetched successfully!")
+        print(f"✅ JSON data fetched successfully! Total channels: {len(data)}")
     except Exception as e:
-        print("❌ Error fetching data:", e)
+        print("❌ Error fetching JSON:", e)
         return
 
     m3u_lines = ["#EXTM3U"]
 
-    # 🔍 JSON Structure check
-    if isinstance(data, list):
-        print(f"📘 JSON is a LIST with {len(data)} items")
-        items = enumerate(data)  # index, item
-    elif isinstance(data, dict):
-        print(f"📗 JSON is a DICT with {len(data)} keys")
-        items = data.items()
-    else:
-        print("⚠️ Unsupported JSON format!")
-        return
-
-    for name, info in items:
+    # ✅ Iterate through JSON list
+    for ch in data:
         try:
-            # JSON যদি list হয়, তখন name হলো index
-            name = info.get("name", str(name))
-            tvg_logo = info.get("tvg_logo", "")
-            links = info.get("links", [])
+            name = ch.get("name", "Unknown Channel")
+            logo = ch.get("logo", "")
+            link = ch.get("link", "")
+            referer = ch.get("referer", "")
+            origin = ch.get("origin", "")
 
-            if not links:
-                continue
+            if not link:
+                continue  # skip empty link
 
-            for link in links:
-                if not link.strip():
-                    continue
-
-                m3u_lines.append(f'#EXTINF:-1 tvg-logo="{tvg_logo}",{name}')
-                m3u_lines.append(f"#EXTVLCOPT:http-referrer={DEFAULT_REFERRER}")
-                m3u_lines.append(f"#EXTVLCOPT:http-origin={DEFAULT_ORIGIN}")
-                m3u_lines.append(link.strip())
+            # ✅ Build each channel entry
+            m3u_lines.append(f'#EXTINF:-1 tvg-logo="{logo}",{name}')
+            if referer:
+                m3u_lines.append(f"#EXTVLCOPT:http-referrer={referer}")
+            if origin:
+                m3u_lines.append(f"#EXTVLCOPT:http-origin={origin}")
+            m3u_lines.append(link)
 
         except Exception as e:
-            print(f"⚠️ Error processing {name}: {e}")
+            print(f"⚠️ Error processing channel: {e}")
 
+    # ✅ Save to file
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write("\n".join(m3u_lines))
 
-    print(f"✅ Playlist generated successfully: {OUTPUT_FILE}")
-    print("🕓 Updated:", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    print(f"✅ Playlist generated: {OUTPUT_FILE}")
+    print("🕓 Updated at:", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
 
 if __name__ == "__main__":
