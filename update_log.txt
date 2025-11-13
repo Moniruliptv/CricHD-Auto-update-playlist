@@ -372,3 +372,5 @@
 [2025-11-13 17:58:17] ✅ Toffee.m3u updated successfully (44 chars)
 [2025-11-13 18:56:50] ⚠️ Invalid playlist format — missing #EXTM3U header, adding fallback.
 [2025-11-13 18:56:50] ✅ Toffee.m3u updated successfully (44 chars)
+[2025-11-13 19:22:20] ⚠️ Invalid playlist format — missing #EXTM3U header, adding fallback.
+[2025-11-13 19:22:20] ✅ Toffee.m3u updated successfully (44 chars)
